@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { categoryIconMap } from './Icons';
 
 interface ConfigCardProps {
   title: string;
@@ -12,12 +13,12 @@ interface ConfigCardProps {
   index?: number;
 }
 
-const categoryColors: Record<string, { bg: string; text: string; icon: string }> = {
-  'cursor-rules': { bg: 'bg-purple-100', text: 'text-purple-700', icon: '📐' },
-  'mcp-configs': { bg: 'bg-blue-100', text: 'text-blue-700', icon: '🔌' },
-  'claude-files': { bg: 'bg-amber-100', text: 'text-amber-700', icon: '📄' },
-  plugins: { bg: 'bg-green-100', text: 'text-green-700', icon: '🧩' },
-  skills: { bg: 'bg-rose-100', text: 'text-rose-700', icon: '⚡' },
+const categoryColors: Record<string, { bg: string; text: string }> = {
+  'cursor-rules': { bg: 'bg-purple-100', text: 'text-purple-700' },
+  'mcp-configs': { bg: 'bg-blue-100', text: 'text-blue-700' },
+  'claude-files': { bg: 'bg-amber-100', text: 'text-amber-700' },
+  plugins: { bg: 'bg-green-100', text: 'text-green-700' },
+  skills: { bg: 'bg-rose-100', text: 'text-rose-700' },
 };
 
 const difficultyColors: Record<string, string> = {
@@ -61,7 +62,7 @@ export default function ConfigCard({
       {/* Category badge */}
       <div className="flex items-center gap-2 mb-3">
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cat.bg} ${cat.text}`}>
-          <span>{cat.icon}</span>
+          {categoryIconMap[category]?.({ size: 14 }) || categoryIconMap['plugins']!({ size: 14 })}
           {category.replace('-', ' ')}
         </span>
         <span className={`text-xs font-medium ${difficultyColors[difficulty]}`}>

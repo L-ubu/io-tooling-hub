@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { showToast } from './Toast';
+import { RulerIcon, PlugIcon, FileTextIcon, PuzzleIcon, BoltIcon, LinkIcon, BoxIcon, CheckCircleIcon, categoryIconMap } from './Icons';
 
 const PASSCODE = 'IO_Tooling';
 
-const CATEGORIES = [
-  { id: 'cursor-rules', label: 'Cursor Rule', icon: '📐', desc: 'AI behavior rules for Cursor IDE' },
-  { id: 'mcp-configs', label: 'MCP Config', icon: '🔌', desc: 'Model Context Protocol server setup' },
-  { id: 'claude-files', label: 'Claude File', icon: '📄', desc: 'CLAUDE.md instructions & templates' },
-  { id: 'plugins', label: 'Plugin / Extension', icon: '🧩', desc: 'IDE extensions & CLI tools' },
-  { id: 'skills', label: 'Skill / Workflow', icon: '⚡', desc: 'Reusable AI workflows, prompts, and skill files' },
-  { id: 'link', label: 'External Link', icon: '🔗', desc: 'Link to an existing tool, plugin, or resource' },
+const CATEGORIES: { id: string; label: string; icon: ReactNode; desc: string }[] = [
+  { id: 'cursor-rules', label: 'Cursor Rule', icon: <RulerIcon size={28} />, desc: 'AI behavior rules for Cursor IDE' },
+  { id: 'mcp-configs', label: 'MCP Config', icon: <PlugIcon size={28} />, desc: 'Model Context Protocol server setup' },
+  { id: 'claude-files', label: 'Claude File', icon: <FileTextIcon size={28} />, desc: 'CLAUDE.md instructions & templates' },
+  { id: 'plugins', label: 'Plugin / Extension', icon: <PuzzleIcon size={28} />, desc: 'IDE extensions & CLI tools' },
+  { id: 'skills', label: 'Skill / Workflow', icon: <BoltIcon size={28} />, desc: 'Reusable AI workflows, prompts, and skill files' },
+  { id: 'link', label: 'External Link', icon: <LinkIcon size={28} />, desc: 'Link to an existing tool, plugin, or resource' },
 ];
 
 const DIFFICULTIES = [
@@ -187,7 +188,7 @@ export default function SubmitForm() {
               : 'bg-io-gray-light text-io-gray-dark hover:bg-io-gray-light/80'
           }`}
         >
-          <span>{CATEGORIES.find((c) => c.id === item.category)?.icon || '📦'}</span>
+          <span className="flex items-center">{CATEGORIES.find((c) => c.id === item.category)?.icon || <BoxIcon size={16} />}</span>
           <span className="max-w-[120px] truncate">{item.title || `Item ${i + 1}`}</span>
           {items.length > 1 && (
             <span
@@ -251,9 +252,9 @@ export default function SubmitForm() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', bounce: 0.5, delay: 0.2 }}
-          className="text-6xl mb-4"
+          className="mb-4 text-green-500 flex justify-center"
         >
-          🎉
+          <CheckCircleIcon size={64} />
         </motion.div>
         <h2 className="text-2xl font-bold text-io-text mb-2">
           {items.length > 1 ? `${items.length} configs submitted!` : 'Config submitted!'}
@@ -309,7 +310,7 @@ export default function SubmitForm() {
                     : 'border-io-gray-light hover:border-io-primary/30'
                 }`}
               >
-                <span className="text-3xl">{cat.icon}</span>
+                <span className="text-io-gray-dark">{cat.icon}</span>
                 <div className="font-bold text-io-text mt-2 group-hover:text-io-primary transition-colors">{cat.label}</div>
                 <div className="text-xs text-io-text-muted mt-1">{cat.desc}</div>
               </button>
@@ -519,7 +520,7 @@ export default function SubmitForm() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg">{cat?.icon}</span>
+                        <span className="text-io-gray-dark">{cat?.icon}</span>
                         <span className="text-xs font-semibold text-io-text-muted uppercase tracking-wider">
                           {cat?.label}
                         </span>

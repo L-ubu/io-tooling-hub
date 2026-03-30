@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
+import { categoryIconMap, HomeIcon } from './Icons';
 
 interface CategoryFilterProps {
-  categories: { id: string; label: string; icon: string; count: number }[];
+  categories: { id: string; label: string; iconKey: string; count: number }[];
   activeCategory: string;
 }
 
@@ -10,6 +11,7 @@ export default function CategoryFilter({ categories, activeCategory }: CategoryF
     <div className="flex flex-wrap gap-2">
       {categories.map((cat) => {
         const isActive = activeCategory === cat.id;
+        const IconFn = categoryIconMap[cat.id] || HomeIcon;
         return (
           <motion.a
             key={cat.id}
@@ -22,7 +24,7 @@ export default function CategoryFilter({ categories, activeCategory }: CategoryF
                 : 'bg-white text-io-gray-dark border border-io-gray-light hover:border-io-primary/30 hover:text-io-primary'
             }`}
           >
-            <span>{cat.icon}</span>
+            <IconFn size={16} />
             <span>{cat.label}</span>
             <span
               className={`ml-1 text-xs px-1.5 py-0.5 rounded-full ${

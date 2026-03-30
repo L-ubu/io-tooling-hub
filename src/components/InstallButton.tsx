@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BoltIcon, TerminalIcon, BotIcon, ClipboardIcon, DownloadIcon, PuzzleIcon, MonitorIcon, LinkIcon } from './Icons';
 
 interface InstallButtonProps {
   installType?: string;
@@ -38,14 +39,14 @@ export default function InstallButton({
   };
 
   const getInstallActions = () => {
-    const actions: { label: string; icon: string; target: string; action: () => void; primary?: boolean }[] = [];
+    const actions: { label: string; icon: ReactNode; target: string; action: () => void; primary?: boolean }[] = [];
 
     if (installType === 'mcp') {
       // Cursor deep link — the real one-click install
       if (installTarget.includes('cursor') && cursorDeepLink) {
         actions.push({
           label: 'Add to Cursor',
-          icon: '⚡',
+          icon: <BoltIcon size={16} />,
           target: 'cursor-deeplink',
           primary: true,
           action: () => {
@@ -58,7 +59,7 @@ export default function InstallButton({
         // Fallback: copy config
         actions.push({
           label: 'Copy for Cursor',
-          icon: '⌨️',
+          icon: <TerminalIcon size={16} />,
           target: 'cursor',
           action: () => copyToClipboard(installCommand, 'cursor'),
         });
@@ -69,7 +70,7 @@ export default function InstallButton({
         const cmd = `claude mcp add ${serverName} ${installCommand}`;
         actions.push({
           label: 'Add to Claude Code',
-          icon: '🤖',
+          icon: <BotIcon size={16} />,
           target: 'claude-code',
           action: () => copyToClipboard(cmd, 'claude-code'),
         });
@@ -79,7 +80,7 @@ export default function InstallButton({
     if (installType === 'cursor-rule') {
       actions.push({
         label: 'Copy Rule',
-        icon: '📋',
+        icon: <ClipboardIcon size={16} />,
         target: 'cursor-rule',
         primary: true,
         action: () => copyToClipboard(rawContent || '', 'cursor-rule'),
@@ -89,7 +90,7 @@ export default function InstallButton({
     if (installType === 'claude-file') {
       actions.push({
         label: 'Download File',
-        icon: '📥',
+        icon: <DownloadIcon size={16} />,
         target: 'claude-file',
         primary: true,
         action: () => {
@@ -110,7 +111,7 @@ export default function InstallButton({
       if (extensionId) {
         actions.push({
           label: 'Install Extension',
-          icon: '🧩',
+          icon: <PuzzleIcon size={16} />,
           target: 'plugin',
           primary: true,
           action: () => {
@@ -121,7 +122,7 @@ export default function InstallButton({
       if (installCommand) {
         actions.push({
           label: 'Copy Install Command',
-          icon: '💻',
+          icon: <MonitorIcon size={16} />,
           target: 'plugin-cmd',
           action: () => copyToClipboard(installCommand, 'plugin-cmd'),
         });
@@ -132,7 +133,7 @@ export default function InstallButton({
     if (externalUrl) {
       actions.push({
         label: 'View Docs',
-        icon: '🔗',
+        icon: <LinkIcon size={16} />,
         target: 'external',
         action: () => window.open(externalUrl, '_blank'),
       });

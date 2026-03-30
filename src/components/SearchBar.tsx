@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { categoryIconMap, BoxIcon } from './Icons';
 
 interface SearchItem {
   title: string;
@@ -36,12 +37,9 @@ export default function SearchBar({ items }: SearchBarProps) {
     setResults(filtered.slice(0, 6));
   }, [query, items]);
 
-  const categoryIcons: Record<string, string> = {
-    'cursor-rules': '📐',
-    'mcp-configs': '🔌',
-    'claude-files': '📄',
-    plugins: '🧩',
-    skills: '⚡',
+  const getCategoryIcon = (cat: string) => {
+    const IconFn = categoryIconMap[cat];
+    return IconFn ? <IconFn size={16} /> : <BoxIcon size={16} />;
   };
 
   return (
@@ -103,7 +101,7 @@ export default function SearchBar({ items }: SearchBarProps) {
                 href={`/item/${item.category}/${item.slug}`}
                 className="flex items-start gap-3 px-4 py-3 hover:bg-io-gray-light/30 transition-colors border-b border-io-gray-light/30 last:border-0"
               >
-                <span className="text-lg mt-0.5">{categoryIcons[item.category] || '📦'}</span>
+                <span className="mt-0.5 text-io-gray-dark">{getCategoryIcon(item.category)}</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-io-text truncate">{item.title}</div>
                   <div className="text-xs text-io-text-muted truncate">{item.description}</div>
