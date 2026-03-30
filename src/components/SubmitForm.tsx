@@ -1,9 +1,7 @@
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { showToast } from './Toast';
 import { RulerIcon, PlugIcon, FileTextIcon, PuzzleIcon, BoltIcon, LinkIcon, BoxIcon, CheckCircleIcon, categoryIconMap } from './Icons';
-
-const PASSCODE = 'IO_Tooling';
 
 const CATEGORIES: { id: string; label: string; icon: ReactNode; desc: string }[] = [
   { id: 'cursor-rules', label: 'Cursor Rule', icon: <RulerIcon size={28} />, desc: 'AI behavior rules for Cursor IDE' },
@@ -48,10 +46,15 @@ function createEmptyItem(): SubmitItem {
   };
 }
 
+interface GitHubUser {
+  login: string;
+  name: string;
+  avatarUrl: string;
+}
+
 export default function SubmitForm() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [passcodeInput, setPasscodeInput] = useState('');
-  const [passcodeError, setPasscodeError] = useState(false);
+  const [user, setUser] = useState<GitHubUser | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [items, setItems] = useState<SubmitItem[]>([createEmptyItem()]);
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const [step, setStep] = useState(0); // 0=category, 1=details, 2=content, 3=review, 4=success
@@ -59,16 +62,15 @@ export default function SubmitForm() {
 
   const activeItem = items[activeItemIndex];
 
-  const handlePasscode = () => {
-    if (passcodeInput === PASSCODE) {
-      setAuthenticated(true);
-      setPasscodeError(false);
-      showToast('Access granted!', 'success');
-    } else {
-      setPasscodeError(true);
-      showToast('Incorrect passcode', 'error');
-    }
-  };
+  useEffect(() => {
+    fetch('/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated) setUser(data.user);
+      })
+      .catch(() => {})
+      .finally(() => setAuthLoading(false));
+  }, []);
 
   const updateItem = (field: keyof SubmitItem, value: string) => {
     setItems((prev) =>
@@ -91,38 +93,31 @@ export default function SubmitForm() {
     }
   };
 
-  const buildIssueUrl = () => {
-    const repo = 'L-ubu/io-tooling-hub';
-    const parts = items.map((item, i) => {
-      const cat = CATEGORIES.find((c) => c.id === item.category);
-      const header = items.length > 1 ? `### Item ${i + 1}: ${item.title}\n` : '';
-      if (item.category === 'link') {
-        return `${header}**Category:** ${cat?.label || item.category}\n**URL:** ${item.externalUrl}\n**Author:** ${item.author || 'Anonymous'}\n\n${item.description}`;
-      }
-      const tags = item.tags ? `\n**Tags:** ${item.tags}` : '';
-      return `${header}**Category:** ${cat?.label || item.category}\n**Difficulty:** ${item.difficulty}${tags}\n**Author:** ${item.author || 'Anonymous'}${item.installCommand ? `\n**Install command:** \`${item.installCommand}\`` : ''}${item.externalUrl ? `\n**External URL:** ${item.externalUrl}` : ''}\n\n${item.description}\n\n<details>\n<summary>Content</summary>\n\n${item.content}\n\n</details>`;
-    });
-
-    const title = items.length > 1
-      ? `[Submit] ${items.length} new configs`
-      : `[Submit] ${items[0].title}`;
-    const body = parts.join('\n\n---\n\n');
-    const labels = [...new Set(items.map((i) => i.category).filter((c) => c !== 'link'))].join(',');
-
-    const params = new URLSearchParams({ title, body });
-    if (labels) params.set('labels', labels);
-    return `https://github.com/${repo}/issues/new?${params.toString()}`;
-  };
+  const [prUrl, setPrUrl] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      const url = buildIssueUrl();
-      window.open(url, '_blank');
-      showToast('GitHub issue opened — your submission will be reviewed and merged.', 'success');
+      // Auto-fill author from GitHub user if not set
+      const submittableItems = items.map((item) => ({
+        ...item,
+        author: item.author || user.name || user.login,
+      }));
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: submittableItems }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data.error || 'Submission failed', 'error');
+        return;
+      }
+      setPrUrl(data.prUrl);
+      showToast('Pull request created successfully!', 'success');
       setStep(4);
     } catch {
-      showToast('Failed to open GitHub. Please try again.', 'error');
+      showToast('Failed to submit. Please try again.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -137,59 +132,44 @@ export default function SubmitForm() {
     return item.title && item.description && item.content;
   });
 
-  // --- Passcode Gate ---
-  if (!authenticated) {
+  // --- Loading State ---
+  if (authLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <svg className="w-6 h-6 animate-spin text-io-primary" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+      </div>
+    );
+  }
+
+  // --- GitHub Login Gate ---
+  if (!user) {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="bg-white rounded-2xl shadow-xl shadow-black/5 border border-io-gray-light/50 p-8">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 mx-auto mb-4 bg-io-primary/10 rounded-2xl flex items-center justify-center">
-              <svg className="w-8 h-8 text-io-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            <div className="w-16 h-16 mx-auto mb-4 bg-io-surface-dark rounded-2xl flex items-center justify-center">
+              <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-io-text mb-2">Enter Passcode</h2>
+            <h2 className="text-xl font-bold text-io-text mb-2">Sign in to submit</h2>
             <p className="text-sm text-io-text-muted">
-              Enter the iO Tooling Hub passcode to submit configs.
+              Log in with your GitHub account to create a pull request with your config.
             </p>
           </div>
-          <div className="max-w-xs mx-auto space-y-4">
-            <div>
-              <input
-                type="password"
-                value={passcodeInput}
-                onChange={(e) => {
-                  setPasscodeInput(e.target.value);
-                  setPasscodeError(false);
-                }}
-                onKeyDown={(e) => e.key === 'Enter' && handlePasscode()}
-                placeholder="Passcode"
-                className={`w-full px-4 py-3 border-2 rounded-xl text-sm text-center font-mono tracking-widest focus:ring-4 outline-none transition-all ${
-                  passcodeError
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10 bg-red-50'
-                    : 'border-io-gray-light focus:border-io-primary focus:ring-io-primary/10'
-                }`}
-                autoFocus
-              />
-              <AnimatePresence>
-                {passcodeError && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-xs text-red-500 mt-2 text-center"
-                  >
-                    Incorrect passcode. Please try again.
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </div>
-            <button
-              onClick={handlePasscode}
-              className="w-full px-6 py-3 rounded-xl text-sm font-semibold bg-io-primary text-white hover:bg-io-primary-light transition-all"
+          <div className="max-w-xs mx-auto">
+            <a
+              href="/auth/login"
+              className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl text-sm font-semibold bg-io-surface-dark text-white hover:bg-io-surface-dark/90 transition-all"
             >
-              Unlock
-            </button>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+              </svg>
+              Sign in with GitHub
+            </a>
           </div>
         </div>
       </motion.div>
@@ -284,11 +264,19 @@ export default function SubmitForm() {
           {items.length > 1 ? `${items.length} configs submitted!` : 'Config submitted!'}
         </h2>
         <p className="text-io-text-muted mb-8">
-          {items.length > 1
-            ? 'A GitHub issue has been created with your configs. They will go live after review.'
-            : 'A GitHub issue has been created. Your config will go live after review.'}
+          A pull request has been created. Your config will go live after review.
         </p>
-        <div className="flex gap-3 justify-center">
+        <div className="flex gap-3 justify-center flex-wrap">
+          {prUrl && (
+            <a
+              href={prUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-2.5 rounded-xl text-sm font-semibold bg-io-primary text-white hover:bg-io-primary-light transition-all"
+            >
+              View Pull Request
+            </a>
+          )}
           <a
             href="/"
             className="px-6 py-2.5 rounded-xl text-sm font-medium border border-io-gray-light text-io-gray-dark hover:bg-io-gray-light/50 transition-all"
@@ -312,6 +300,23 @@ export default function SubmitForm() {
 
   return (
     <div>
+      {/* Logged-in user bar */}
+      <div className="flex items-center justify-between mb-6 px-4 py-3 bg-io-gray-light/30 rounded-xl border border-io-gray-light/50">
+        <div className="flex items-center gap-3">
+          <img src={user.avatarUrl} alt={user.login} className="w-8 h-8 rounded-full" />
+          <div>
+            <div className="text-sm font-semibold text-io-text">{user.name}</div>
+            <div className="text-xs text-io-text-muted">@{user.login}</div>
+          </div>
+        </div>
+        <a
+          href="/auth/logout"
+          className="text-xs text-io-text-muted hover:text-io-text transition-colors"
+        >
+          Sign out
+        </a>
+      </div>
+
       {renderItemTabs()}
       {renderProgress()}
 
