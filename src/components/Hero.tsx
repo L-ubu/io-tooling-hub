@@ -101,7 +101,7 @@ export default function Hero({ searchItems }: HeroProps) {
           >
             {[
               { label: 'Configs', value: searchItems.length },
-              { label: 'Categories', value: '4' },
+              { label: 'Categories', value: '5' },
               { label: 'One-click install', value: '✓' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">

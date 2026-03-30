@@ -41,6 +41,7 @@ export default function SearchBar({ items }: SearchBarProps) {
     'mcp-configs': '🔌',
     'claude-files': '📄',
     plugins: '🧩',
+    skills: '⚡',
   };
 
   return (
