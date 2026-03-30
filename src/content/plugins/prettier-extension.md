@@ -6,7 +6,7 @@ tags: ["formatting", "prettier", "code-style"]
 difficulty: "beginner"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "plugin"
 installTarget: ["vscode", "cursor"]
 extensionId: "esbenp.prettier-vscode"

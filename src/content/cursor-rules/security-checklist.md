@@ -6,7 +6,7 @@ tags: ["security", "owasp", "best-practices"]
 difficulty: "advanced"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "cursor-rule"
 installTarget: ["cursor"]
 ---

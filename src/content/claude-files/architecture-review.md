@@ -6,7 +6,7 @@ tags: ["claude-code", "architecture", "review"]
 difficulty: "advanced"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "claude-file"
 installTarget: ["claude-code"]
 downloadFile: "CLAUDE-ARCHITECTURE.md"

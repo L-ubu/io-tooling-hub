@@ -6,7 +6,7 @@ tags: ["cursor", "ide", "setup", "productivity"]
 difficulty: "beginner"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "plugin"
 installTarget: ["cursor"]
 ---

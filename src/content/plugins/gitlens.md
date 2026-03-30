@@ -6,7 +6,7 @@ tags: ["git", "blame", "history"]
 difficulty: "beginner"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "plugin"
 installTarget: ["vscode", "cursor"]
 extensionId: "eamodio.gitlens"

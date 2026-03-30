@@ -6,7 +6,7 @@ tags: ["api", "openapi", "codegen"]
 difficulty: "intermediate"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "skill"
 installTarget: ["cursor", "claude-code"]
 ---

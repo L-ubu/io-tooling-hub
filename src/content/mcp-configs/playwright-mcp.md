@@ -6,7 +6,7 @@ tags: ["playwright", "browser", "testing", "e2e", "automation"]
 difficulty: "beginner"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "mcp"
 installTarget: ["cursor", "claude-code"]
 installCommand: "npx -y @anthropic/playwright-mcp-server"

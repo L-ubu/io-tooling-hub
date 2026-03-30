@@ -6,7 +6,7 @@ tags: ["figma", "design", "ui", "frontend", "design-to-code"]
 difficulty: "intermediate"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "mcp"
 installTarget: ["cursor", "claude-code"]
 installCommand: "npx -y @anthropic/figma-mcp-server"

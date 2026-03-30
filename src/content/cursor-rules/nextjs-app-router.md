@@ -6,7 +6,7 @@ tags: ["nextjs", "react", "routing", "server-components"]
 difficulty: "intermediate"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "cursor-rule"
 installTarget: ["cursor"]
 ---

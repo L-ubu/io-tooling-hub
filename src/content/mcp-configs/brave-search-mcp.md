@@ -6,7 +6,7 @@ tags: ["search", "web", "brave", "research"]
 difficulty: "beginner"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "mcp"
 installTarget: ["cursor", "claude-code"]
 installCommand: "npx -y @modelcontextprotocol/server-brave-search"

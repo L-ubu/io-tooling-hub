@@ -6,7 +6,7 @@ tags: ["claude-code", "testing", "automation"]
 difficulty: "intermediate"
 createdAt: 2026-03-30
 updatedAt: 2026-03-30
-featured: true
+featured: false
 installType: "claude-file"
 installTarget: ["claude-code"]
 downloadFile: "CLAUDE-TEST.md"
