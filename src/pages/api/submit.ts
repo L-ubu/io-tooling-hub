@@ -119,11 +119,18 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Create files for each item
     for (const item of body.items) {
-      if (item.category === 'link') continue;
-
       const slug = slugify(item.title);
-      const path = `src/content/${item.category}/${slug}.md`;
-      const fileContent = buildFrontmatter(item) + item.content;
+      let path: string;
+      let fileContent: string;
+
+      if (item.category === 'link') {
+        // Links get a submission record file
+        path = `src/content/links/${slug}.md`;
+        fileContent = `---\ntitle: "${item.title}"\ndescription: "${item.description}"\nauthor: "${item.author || 'Anonymous'}"\nexternalUrl: "${item.externalUrl}"\ncreatedAt: ${new Date().toISOString().split('T')[0]}\n---\n`;
+      } else {
+        path = `src/content/${item.category}/${slug}.md`;
+        fileContent = buildFrontmatter(item) + item.content;
+      }
 
       await octokit.rest.repos.createOrUpdateFileContents({
         owner: forkOwner,
