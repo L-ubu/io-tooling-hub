@@ -52,15 +52,43 @@ interface GitHubUser {
   avatarUrl: string;
 }
 
+const STORAGE_KEY = 'io_hub_draft';
+
+function loadDraft(): { items: SubmitItem[]; activeItemIndex: number; step: number } | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (data.items?.length > 0) return data;
+  } catch {}
+  return null;
+}
+
+function saveDraft(items: SubmitItem[], activeItemIndex: number, step: number) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ items, activeItemIndex, step }));
+  } catch {}
+}
+
+function clearDraft() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch {}
+}
+
 export default function SubmitForm() {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [items, setItems] = useState<SubmitItem[]>([createEmptyItem()]);
-  const [activeItemIndex, setActiveItemIndex] = useState(0);
-  const [step, setStep] = useState(0); // 0=category, 1=details, 2=content, 3=review, 4=success
+  const draft = loadDraft();
+  const [items, setItems] = useState<SubmitItem[]>(draft?.items || [createEmptyItem()]);
+  const [activeItemIndex, setActiveItemIndex] = useState(draft?.activeItemIndex || 0);
+  const [step, setStep] = useState(draft?.step || 0);
   const [submitting, setSubmitting] = useState(false);
 
   const activeItem = items[activeItemIndex];
+
+  // Persist draft on every change
+  useEffect(() => {
+    if (step < 4) saveDraft(items, activeItemIndex, step);
+  }, [items, activeItemIndex, step]);
 
   useEffect(() => {
     fetch('/auth/me')
@@ -114,6 +142,7 @@ export default function SubmitForm() {
         return;
       }
       setPrUrl(data.prUrl);
+      clearDraft();
       showToast('Pull request created successfully!', 'success');
       setStep(4);
     } catch {
@@ -285,6 +314,7 @@ export default function SubmitForm() {
           </a>
           <button
             onClick={() => {
+              clearDraft();
               setItems([createEmptyItem()]);
               setActiveItemIndex(0);
               setStep(0);
