@@ -91,14 +91,38 @@ export default function SubmitForm() {
     }
   };
 
+  const buildIssueUrl = () => {
+    const repo = 'L-ubu/io-tooling-hub';
+    const parts = items.map((item, i) => {
+      const cat = CATEGORIES.find((c) => c.id === item.category);
+      const header = items.length > 1 ? `### Item ${i + 1}: ${item.title}\n` : '';
+      if (item.category === 'link') {
+        return `${header}**Category:** ${cat?.label || item.category}\n**URL:** ${item.externalUrl}\n**Author:** ${item.author || 'Anonymous'}\n\n${item.description}`;
+      }
+      const tags = item.tags ? `\n**Tags:** ${item.tags}` : '';
+      return `${header}**Category:** ${cat?.label || item.category}\n**Difficulty:** ${item.difficulty}${tags}\n**Author:** ${item.author || 'Anonymous'}${item.installCommand ? `\n**Install command:** \`${item.installCommand}\`` : ''}${item.externalUrl ? `\n**External URL:** ${item.externalUrl}` : ''}\n\n${item.description}\n\n<details>\n<summary>Content</summary>\n\n${item.content}\n\n</details>`;
+    });
+
+    const title = items.length > 1
+      ? `[Submit] ${items.length} new configs`
+      : `[Submit] ${items[0].title}`;
+    const body = parts.join('\n\n---\n\n');
+    const labels = [...new Set(items.map((i) => i.category).filter((c) => c !== 'link'))].join(',');
+
+    const params = new URLSearchParams({ title, body });
+    if (labels) params.set('labels', labels);
+    return `https://github.com/${repo}/issues/new?${params.toString()}`;
+  };
+
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      showToast(`${items.length} item${items.length > 1 ? 's' : ''} submitted! PRs will be created for review.`, 'success');
+      const url = buildIssueUrl();
+      window.open(url, '_blank');
+      showToast('GitHub issue opened — your submission will be reviewed and merged.', 'success');
       setStep(4);
     } catch {
-      showToast('Failed to submit. Please try again.', 'error');
+      showToast('Failed to open GitHub. Please try again.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -261,8 +285,8 @@ export default function SubmitForm() {
         </h2>
         <p className="text-io-text-muted mb-8">
           {items.length > 1
-            ? 'Pull requests have been created for each item. They will go live after review.'
-            : 'A pull request has been created. It will go live after review.'}
+            ? 'A GitHub issue has been created with your configs. They will go live after review.'
+            : 'A GitHub issue has been created. Your config will go live after review.'}
         </p>
         <div className="flex gap-3 justify-center">
           <a
