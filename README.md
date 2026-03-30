@@ -1,43 +1,68 @@
-# Astro Starter Kit: Minimal
+# iO Tooling Hub
+
+A platform for iO Digital colleagues to discover, share, and one-click install AI tooling configurations.
+
+Browse cursor rules, MCP server configs, Claude instruction files, IDE plugins, and reusable AI skill workflows — all in one place.
+
+## Features
+
+- **One-click install** — Add MCP servers to Cursor via deep links, install VS Code extensions, or copy configs to clipboard
+- **54 configs** across 5 categories: Cursor Rules, MCP Configs, Claude Files, Plugins, and Skills
+- **Submit flow** — Multi-item submission form with passcode gate and PR-based review
+- **Search** — Client-side full-text search across all configs
+- **Registry API** — Static JSON endpoints for programmatic access by AI tools
+- **Animated UI** — Scroll reveals, hover effects, and page transitions with Framer Motion
+
+## Tech Stack
+
+- [Astro](https://astro.build) — Static site generation with content collections
+- [React](https://react.dev) — Interactive islands (search, install buttons, forms)
+- [Tailwind CSS](https://tailwindcss.com) — Styling with iO brand tokens
+- [Framer Motion](https://www.framer.com/motion/) — Animations
+- TypeScript throughout
+
+## Project Structure
+
+```
+src/
+  components/      React islands and Astro components
+  content/         Markdown content files (5 collections)
+  layouts/         Base layout with header and footer
+  lib/             Collection helpers, icon utilities
+  pages/           Routes: home, browse, item detail, submit, API
+  styles/          Global CSS with iO brand tokens
+```
+
+## Getting Started
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Open [localhost:4321](http://localhost:4321) to view the site.
 
-## 🚀 Project Structure
+## Commands
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command           | Action                                      |
+| :---------------- | :------------------------------------------ |
+| `npm install`     | Install dependencies                        |
+| `npm run dev`     | Start dev server at localhost:4321           |
+| `npm run build`   | Build production site to `./dist/`           |
+| `npm run preview` | Preview the build locally before deploying   |
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## API Endpoints
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+| Endpoint               | Description              |
+| :--------------------- | :----------------------- |
+| `/api/registry.json`   | List all configs         |
+| `/api/search.json`     | Full search index        |
+| `/api/install/:slug`   | Raw config for a single item |
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Adding Content
 
-Any static assets, like images, can be placed in the `public/` directory.
+Add a markdown file to the appropriate `src/content/` subdirectory with the required frontmatter schema. Run `npm run build` to verify it passes validation.
 
-## 🧞 Commands
+## License
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Internal iO Digital project.
