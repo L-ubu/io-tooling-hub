@@ -19,7 +19,7 @@ export const GET: APIRoute = async () => {
     url: `/item/${item.category}/${item.id}`,
   }));
 
-  return new Response(JSON.stringify({ results, total: results.length }), {
+  return new Response(JSON.stringify({ items: results, total: results.length }), {
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
