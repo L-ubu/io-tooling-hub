@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@theme {
+  /* iO Digital Brand Colors */
+  --color-io-primary: #15208C;
+  --color-io-primary-light: #1e2da6;
+  --color-io-primary-dark: #0f1866;
+  --color-io-accent: #6366F1;
+  --color-io-accent-light: #818CF8;
+  --color-io-white: #FFFFFF;
+  --color-io-gray: #9CA3AF;
+  --color-io-gray-light: #F3F4F6;
+  --color-io-gray-dark: #4B5563;
+  --color-io-bg: #F9FAFB;
+  --color-io-bg-dark: #0a0f3d;
+  --color-io-surface: #FFFFFF;
+  --color-io-surface-dark: #111827;
+  --color-io-text: #111827;
+  --color-io-text-dark: #F9FAFB;
+  --color-io-text-muted: #6B7280;
+
+  /* Font */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-fade-in-up: fade-in-up 0.6s ease-out;
+  --animate-slide-in: slide-in 0.4s ease-out;
+  --animate-scale-in: scale-in 0.3s ease-out;
+  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.5s infinite;
+  --animate-gradient: gradient-shift 8s ease infinite;
+}
+
+/* Keyframes */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-io-text);
+  background: var(--color-io-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode */
+.dark body {
+  color: var(--color-io-text-dark);
+  background: var(--color-io-bg-dark);
+}
+
+/* Selection */
+::selection {
+  background: var(--color-io-accent);
+  color: white;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-io-gray);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-io-gray-dark);
+}
+
+/* View Transitions */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: fade-in 0.3s ease-out reverse;
+}
+
+::view-transition-new(root) {
+  animation: fade-in 0.3s ease-out;
+}
