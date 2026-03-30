@@ -3,25 +3,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AnimatedSection from '../components/AnimatedSection';
 import ToastContainer from '../components/Toast';
 import SubmitForm from '../components/SubmitForm';
+import { getCategoryIcon } from '../lib/icons';
+
+const badges = [
+  { id: 'cursor-rules', label: 'Cursor Rules' },
+  { id: 'mcp-configs', label: 'MCP Configs' },
+  { id: 'claude-files', label: 'Claude Files' },
+  { id: 'plugins', label: 'Plugins' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'link', label: 'Links' },
+];
 ---
 
 <BaseLayout title="Submit — iO Tooling Hub">
   <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <AnimatedSection client:visible>
       <a href="/" class="text-sm text-io-text-muted hover:text-io-primary transition-colors mb-8 inline-block">
-        ← Back to home
+        &larr; Back to home
       </a>
       <h1 class="text-3xl font-extrabold text-io-text mb-2">Submit Configs</h1>
       <p class="text-io-text-muted mb-2">
         Share your AI tooling setup with the team. You can submit multiple items at once, or just share a link to an existing tool.
       </p>
       <div class="flex flex-wrap items-center gap-3 mb-8 text-xs text-io-text-muted">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-io-gray-light">📐 Cursor Rules</span>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-io-gray-light">🔌 MCP Configs</span>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-io-gray-light">📄 Claude Files</span>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-io-gray-light">🧩 Plugins</span>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-io-gray-light">⚡ Skills</span>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-io-gray-light">🔗 Links</span>
+        {badges.map((b) => (
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-io-gray-light">
+            <span set:html={getCategoryIcon(b.id, 14)} />
+            {b.label}
+          </span>
+        ))}
       </div>
     </AnimatedSection>
 
