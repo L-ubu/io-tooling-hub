@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ConfigCard from '../../components/ConfigCard';
+import CategoryFilter from '../../components/CategoryFilter';
+import AnimatedSection from '../../components/AnimatedSection';
+import ToastContainer from '../../components/Toast';
+import { getAllItems, getItemsByCategory, CATEGORIES, getCategoryCounts } from '../../lib/collections';
+
+export async function getStaticPaths() {
+  return CATEGORIES.map((cat) => ({
+    params: { category: cat.id },
+  }));
+}
+
+const { category } = Astro.params;
+const allItems = await getAllItems();
+const items = await getItemsByCategory(category!);
+const counts = getCategoryCounts(allItems);
+
+const categoryInfo = CATEGORIES.find((c) => c.id === category);
+const categoryLabel = categoryInfo?.label || 'All';
+
+const categoriesWithCounts = CATEGORIES.map((cat) => ({
+  ...cat,
+  count: counts[cat.id] || 0,
+}));
+---
+
+<BaseLayout title={`${categoryLabel} — iO Tooling Hub`}>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Header -->
+    <AnimatedSection client:visible>
+      <div class="mb-8">
+        <a href="/" class="text-sm text-io-text-muted hover:text-io-primary transition-colors mb-4 inline-block">
+          ← Back to home
+        </a>
+        <h1 class="text-3xl font-bold text-io-text">{categoryLabel}</h1>
+        <p class="text-io-text-muted mt-2">
+          {items.length} {items.length === 1 ? 'config' : 'configs'} available
+        </p>
+      </div>
+    </AnimatedSection>
+
+    <!-- Filters -->
+    <AnimatedSection client:visible delay={0.1}>
+      <div class="mb-8">
+        <CategoryFilter client:load categories={categoriesWithCounts} activeCategory={category!} />
+      </div>
+    </AnimatedSection>
+
+    <!-- Grid -->
+    {items.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {items.map((item, i) => (
+          <ConfigCard
+            client:visible
+            title={item.data.title}
+            description={item.data.description}
+            author={item.data.author}
+            category={item.category}
+            tags={item.data.tags}
+            difficulty={item.data.difficulty}
+            slug={item.id}
+            featured={item.data.featured}
+            index={i}
+          />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-20">
+        <div class="text-5xl mb-4">📦</div>
+        <h2 class="text-xl font-bold text-io-text mb-2">No configs yet</h2>
+        <p class="text-io-text-muted mb-6">Be the first to contribute to this category!</p>
+        <a
+          href="/submit"
+          class="inline-flex items-center gap-2 px-6 py-2.5 bg-io-primary text-white font-semibold rounded-xl hover:bg-io-primary-light transition-colors"
+        >
+          Submit a Config
+        </a>
+      </div>
+    )}
+  </section>
+
+  <ToastContainer client:load />
+</BaseLayout>

@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 — iO Tooling Hub">
+  <div class="min-h-[60vh] flex items-center justify-center px-4">
+    <div class="text-center max-w-md">
+      <div class="text-8xl font-extrabold text-io-primary/10 mb-4 select-none">404</div>
+      <h1 class="text-2xl font-bold text-io-text mb-3">Page not found</h1>
+      <p class="text-io-text-muted mb-8">
+        The config or page you're looking for doesn't exist or has been moved.
+      </p>
+      <div class="flex items-center justify-center gap-3">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-io-primary text-white hover:bg-io-primary/90 transition-colors"
+        >
+          Go home
+        </a>
+        <a
+          href="/browse/all"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border border-io-gray-light text-io-gray-dark hover:border-io-primary/30 hover:text-io-primary transition-all"
+        >
+          Browse configs
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

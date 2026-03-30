@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero';
+import ConfigCard from '../components/ConfigCard';
+import AnimatedSection from '../components/AnimatedSection';
+import ToastContainer from '../components/Toast';
+import { getAllItems, getFeaturedItems, CATEGORIES, getCategoryCounts } from '../lib/collections';
+
+const allItems = await getAllItems();
+const featuredItems = await getFeaturedItems();
+const counts = getCategoryCounts(allItems);
+
+const searchItems = allItems.map((item) => ({
+  title: item.data.title,
+  description: item.data.description,
+  category: item.category,
+  slug: item.id,
+  tags: item.data.tags,
+}));
+
+const recentItems = [...allItems]
+  .sort((a, b) => b.data.createdAt.getTime() - a.data.createdAt.getTime())
+  .slice(0, 6);
+---
+
+<BaseLayout title="iO Tooling Hub — Share & Install AI Configs">
+  <Hero client:load searchItems={searchItems} />
+
+  <!-- Categories Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <AnimatedSection client:visible>
+      <h2 class="text-2xl font-bold text-io-text mb-2">Browse by Category</h2>
+      <p class="text-io-text-muted mb-8">Find the right tools for your workflow</p>
+    </AnimatedSection>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {CATEGORIES.filter((c) => c.id !== 'all').map((cat, i) => (
+        <AnimatedSection client:visible delay={i * 0.1}>
+          <a
+            href={`/browse/${cat.id}`}
+            class="group block bg-white rounded-2xl border border-io-gray-light/50 p-6 hover:shadow-lg hover:shadow-io-primary/5 transition-all duration-300 hover:-translate-y-1"
+          >
+            <div class="text-3xl mb-3">{cat.icon}</div>
+            <h3 class="font-bold text-io-text group-hover:text-io-primary transition-colors">
+              {cat.label}
+            </h3>
+            <p class="text-sm text-io-text-muted mt-1">
+              {counts[cat.id] || 0} {(counts[cat.id] || 0) === 1 ? 'config' : 'configs'}
+            </p>
+          </a>
+        </AnimatedSection>
+      ))}
+    </div>
+  </section>
+
+  <!-- Featured Section -->
+  {featuredItems.length > 0 && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <AnimatedSection client:visible>
+        <div class="flex items-center gap-3 mb-8">
+          <span class="text-2xl">⭐</span>
+          <div>
+            <h2 class="text-2xl font-bold text-io-text">Featured</h2>
+            <p class="text-io-text-muted">Hand-picked configs to get you started</p>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {featuredItems.map((item, i) => (
+          <ConfigCard
+            client:visible
+            title={item.data.title}
+            description={item.data.description}
+            author={item.data.author}
+            category={item.category}
+            tags={item.data.tags}
+            difficulty={item.data.difficulty}
+            slug={item.id}
+            featured={item.data.featured}
+            index={i}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Recent Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <AnimatedSection client:visible>
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-2xl font-bold text-io-text">Recently Added</h2>
+          <p class="text-io-text-muted">The latest configs from the team</p>
+        </div>
+        <a
+          href="/browse/all"
+          class="text-sm font-medium text-io-primary hover:text-io-primary-light transition-colors"
+        >
+          View all →
+        </a>
+      </div>
+    </AnimatedSection>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {recentItems.map((item, i) => (
+        <ConfigCard
+          client:visible
+          title={item.data.title}
+          description={item.data.description}
+          author={item.data.author}
+          category={item.category}
+          tags={item.data.tags}
+          difficulty={item.data.difficulty}
+          slug={item.id}
+          featured={item.data.featured}
+          index={i}
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <AnimatedSection client:visible>
+      <div class="bg-gradient-to-br from-io-primary to-io-accent rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+          <div
+            style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"
+            class="w-full h-full"
+          />
+        </div>
+        <div class="relative">
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">
+            Got a config to share?
+          </h2>
+          <p class="text-white/70 mb-8 max-w-lg mx-auto">
+            Help your iO colleagues work smarter. Submit your Cursor rules, MCP configs, or any AI tooling setup.
+          </p>
+          <a
+            href="/submit"
+            class="inline-flex items-center gap-2 px-8 py-3 bg-white text-io-primary font-semibold rounded-xl hover:shadow-xl hover:shadow-white/20 transition-all duration-200 hover:-translate-y-0.5"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Submit a Config
+          </a>
+        </div>
+      </div>
+    </AnimatedSection>
+  </section>
+
+  <!-- API Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mb-8">
+    <AnimatedSection client:visible>
+      <div class="bg-io-surface-dark rounded-3xl p-8 sm:p-12 text-white">
+        <div class="flex flex-col lg:flex-row items-start gap-8">
+          <div class="flex-1">
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-io-accent/20 text-io-accent-light mb-4">
+              AI-Accessible
+            </span>
+            <h2 class="text-2xl font-bold mb-4">Registry API</h2>
+            <p class="text-white/60 mb-4">
+              The hub exposes a JSON API that AI tools can query directly. Point Claude or Cursor at these endpoints to discover and install configs programmatically.
+            </p>
+            <div class="space-y-2 text-sm font-mono">
+              <div class="flex items-center gap-2">
+                <span class="text-green-400">GET</span>
+                <span class="text-white/80">/api/registry</span>
+                <span class="text-white/40">— list all configs</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-green-400">GET</span>
+                <span class="text-white/80">/api/registry/:slug</span>
+                <span class="text-white/40">— single config</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-green-400">GET</span>
+                <span class="text-white/80">/api/search?q=...</span>
+                <span class="text-white/40">— search configs</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-green-400">GET</span>
+                <span class="text-white/80">/api/install/:slug</span>
+                <span class="text-white/40">— raw config JSON</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </AnimatedSection>
+  </section>
+
+  <ToastContainer client:load />
+</BaseLayout>
