@@ -116,7 +116,7 @@ export default function SubmitForm() {
   if (!authenticated) {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div class="bg-white rounded-2xl shadow-xl shadow-black/5 border border-io-gray-light/50 p-8">
+        <div className="bg-white rounded-2xl shadow-xl shadow-black/5 border border-io-gray-light/50 p-8">
           <div className="text-center mb-6">
             <div className="w-16 h-16 mx-auto mb-4 bg-io-primary/10 rounded-2xl flex items-center justify-center">
               <svg className="w-8 h-8 text-io-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
