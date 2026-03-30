@@ -1,12 +1,12 @@
 import { getCollection } from 'astro:content';
 
 export const CATEGORIES = [
-  { id: 'all', label: 'All', icon: '🏠' },
-  { id: 'cursor-rules', label: 'Cursor Rules', icon: '📐' },
-  { id: 'mcp-configs', label: 'MCP Configs', icon: '🔌' },
-  { id: 'claude-files', label: 'Claude Files', icon: '📄' },
-  { id: 'plugins', label: 'Plugins & Extensions', icon: '🧩' },
-  { id: 'skills', label: 'Skills', icon: '⚡' },
+  { id: 'all', label: 'All', iconKey: 'home' },
+  { id: 'cursor-rules', label: 'Cursor Rules', iconKey: 'ruler' },
+  { id: 'mcp-configs', label: 'MCP Configs', iconKey: 'plug' },
+  { id: 'claude-files', label: 'Claude Files', iconKey: 'fileText' },
+  { id: 'plugins', label: 'Plugins & Extensions', iconKey: 'puzzle' },
+  { id: 'skills', label: 'Skills', iconKey: 'bolt' },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]['id'];
