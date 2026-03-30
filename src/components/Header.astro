@@ -1,0 +1,82 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/browse/all', label: 'Browse' },
+  { href: '/submit', label: 'Submit' },
+];
+---
+
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-io-gray-light/50">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-3 group">
+      <div class="relative">
+        <div class="w-10 h-10 bg-io-primary rounded-xl flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-lg group-hover:shadow-io-primary/30">
+          <span class="text-white font-extrabold text-lg tracking-tight">iO</span>
+        </div>
+        <div class="absolute -inset-1 bg-io-primary/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      <div class="flex flex-col">
+        <span class="font-bold text-io-primary text-lg leading-tight">Tooling Hub</span>
+        <span class="text-[10px] text-io-text-muted uppercase tracking-widest">by iO Digital</span>
+      </div>
+    </a>
+
+    <!-- Navigation -->
+    <div class="hidden md:flex items-center gap-1">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+            currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+              ? 'bg-io-primary text-white shadow-md shadow-io-primary/20'
+              : 'text-io-gray-dark hover:text-io-primary hover:bg-io-primary/5',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+
+    <!-- Mobile menu button -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden p-2 rounded-lg hover:bg-io-gray-light transition-colors"
+      aria-label="Toggle menu"
+    >
+      <svg class="w-6 h-6 text-io-gray-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden hidden border-t border-io-gray-light/50 bg-white/95 backdrop-blur-lg">
+    <div class="px-4 py-3 space-y-1">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'block px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
+            currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+              ? 'bg-io-primary text-white'
+              : 'text-io-gray-dark hover:text-io-primary hover:bg-io-primary/5',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>

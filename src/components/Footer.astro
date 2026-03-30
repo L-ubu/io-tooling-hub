@@ -1,0 +1,29 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-io-gray-light/50 bg-white/50 backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-io-primary rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-sm">iO</span>
+        </div>
+        <span class="text-sm text-io-text-muted">
+          &copy; {year} iO Digital &mdash; Tooling Hub
+        </span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="/api/registry" class="text-sm text-io-text-muted hover:text-io-primary transition-colors">
+          API
+        </a>
+        <a href="https://github.com" class="text-sm text-io-text-muted hover:text-io-primary transition-colors">
+          GitHub
+        </a>
+        <a href="https://www.iodigital.com" class="text-sm text-io-text-muted hover:text-io-primary transition-colors" target="_blank" rel="noopener">
+          iodigital.com
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
