@@ -1,10 +1,10 @@
 # iO Tooling Hub
 
-![Screenshot](assets/screenshot.png)
-
 A platform for iO Digital colleagues to discover, share, and one-click install AI tooling configurations.
 
 Browse cursor rules, MCP server configs, Claude instruction files, IDE plugins, and reusable AI skill workflows — all in one place.
+
+![Screenshot](assets/screenshot.png)
 
 ## Features
 
